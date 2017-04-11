@@ -16,9 +16,6 @@
     provider="google"
     on-error="handleError">
     </firebase-auth>
-        <firebase-auth
-    user="{{user}}">
-    </firebase-auth>
     <paper-button raised on-tap="login" hidden$="[[user]]">Sign In</paper-button>
   <paper-button raised on-tap="logout" hidden$="[[!user]]">Sign Out</paper-button>
   <template is="dom-if" if="[[user]]">

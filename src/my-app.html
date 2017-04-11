@@ -9,8 +9,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../../bower_components/polymerfire/polymerfire.html">
-<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
@@ -22,6 +20,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/polymerfire/polymerfire.html">
 <link rel="import" href="my-icons.html">
 <dom-module id="my-app">
   <template>
@@ -64,12 +64,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     <firebase-app
-  auth-domain="AUTH_DOMAIN_URL"
-  database-url="DATABASE_URL"
-  api-key="API_KEY"
-  storage-bucket="STORAGE_BUCKET"
-  messaging-sender-id="MESSAGE_SENDER_ID">
+  auth-domain="{{AUTH_DOMAIN_URL}}"
+  database-url="{{DATABASE_URL}}"
+  api-key="{{API_KEY}}"
+  storage-bucket="{{STORAGE_BUCKET}}"
+  messaging-sender-id="{{MESSAGE_SENDER_ID}}">
 </firebase-app>
+
     <app-location route="{{route}}"></app-location>
     <app-route
         route="{{route}}"
@@ -132,7 +133,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           '_routePageChanged(routeData.page)',
         ];
       }
-
+            constructor(){
+        super()
+        this.set('AUTH_DOMAIN_URL', firebaseAppConfig.AUTH_DOMAIN_URL)
+this.set('DATABASE_URL', firebaseAppConfig.DATABASE_URL)
+this.set('API_KEY', firebaseAppConfig.API_KEY)
+this.set('STORAGE_BUCKET', firebaseAppConfig.STORAGE_BUCKET)
+this.set('MESSAGE_SENDER_ID', firebaseAppConfig.MESSAGE_SENDER_ID)
+      }
       _routePageChanged(page) {
         // Polymer 2.0 will call with `undefined` on initialization.
         // Ignore until we are properly called with a string.
@@ -163,6 +171,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _showPage404() {
         this.page = 'view404';
       }
+
     }
 
     window.customElements.define(MyApp.is, MyApp);
