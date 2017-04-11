@@ -1,0 +1,60 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+
+<dom-module id="anonymous-login">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <firebase-auth
+    id="auth"
+    user="{{user}}"
+    status-known="{{statusKnown}}"
+    provider="google"
+    on-error="handleError">
+    </firebase-auth>
+    </firebase-document>  
+  </template>
+
+  <script>
+    class AnonymousLogin extends Polymer.Element {
+      static get is() { return 'anonymous-login'; }
+      static get properties() {
+        return {
+          user: {
+            type: Object
+          },
+          statusKnown:{
+            type:Object
+          }
+        };
+      }
+static get observers() {
+  return [
+    // Observer method name, followed by a list of dependencies, in parenthesis
+    '_autoAuth(user, statusKnown)'
+  ]
+}
+ constructor(){
+   super()
+   console.log('app-login constructor fired')
+ }
+ ready() {
+   super.ready();
+   console.log('app-login Ready fired')
+
+ }
+ _autoAuth(user, statusknown){
+  if(this.statusKnown && !this.user){
+    return this.$.auth.signInAnonymously();
+  }
+  console.log(this.user);
+ }
+
+};
+
+    window.customElements.define(AnonymousLogin.is, AnonymousLogin);
+  </script>
+</dom-module>

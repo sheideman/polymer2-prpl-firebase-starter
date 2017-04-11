@@ -1,0 +1,135 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<dom-module id="file-upload">
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding:10px;
+      }
+      #create{
+        width:100%;
+      }
+      #files-list {
+      list-style: none;
+      padding:0;
+      margin:0;
+      }
+      #files-list li{
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+      #files-list .content{
+        @apply(--layout-flex);
+        padding:8px;
+      }
+      #files-controls{
+        @apply(--layout-horizontal);
+        @apply(--layout-justified);
+      }
+      .green{
+        color:green;
+      }
+    </style>
+    <firebase-auth
+    user="{{user}}">
+    </firebase-auth>
+    <div id="files-list">
+   <template is="dom-repeat" items="{{files}}" as="file">
+      <p class="content">
+        [[file]]
+        <paper-button id="download" on-tap="download" value="[[file]]">Download</paper-button>
+        <paper-button id="remove" raised on-tap="remove" file="[[file]]">Delete</paper-button>
+      </p>
+      </template>
+    </div>
+    <p class="green">{{status}}</p>
+<progress id="uploader" value="0" max="100" >0%</progress>
+<input id="file" type="file" value="upload"/>
+<paper-button id="upload" on-tap="addFile">Add File</paper-button>
+
+</div>
+  </template>
+
+  <script>
+    class FileUpload extends Polymer.Element {
+      static get is() { return 'file-upload'; }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'prop1'
+          }
+        };
+      }
+ constructor(){
+   super()
+   console.log('file-upload constructor fired')
+ }
+ ready() {
+   super.ready();
+   
+    var storageRef = firebase.storage().ref().child('photos')
+    console.log(this.files);
+ }
+ addFile(e){
+  console.log(e.composedPath())
+  const file = this.$.file.files[0]
+var self = this
+  var storageRef = firebase.storage().ref(`/photos/${file.name}`)
+  var task = storageRef.put(file)
+task.on('state_changed', function progress(snapshot){
+var percentage = (snapshot.bytesTransferred/ snapshot.totalBytes) *100;
+self.set('progress', percentage);
+self.$.uploader.value = percentage;
+console.log(storageRef, percentage)
+if(percentage === 100){
+   self.set('status', 'File Upload Complete');
+
+   self._filesChanged(storageRef)
+   
+  }
+ })
+}
+_filesChanged(storageRef){
+
+console.log(storageRef.location)
+}
+ remove(e){
+  firebase.storage().ref(`/photos/${file.name}`)
+   console.log(e.target.file.$key)
+   var key = e.target.file.$key;
+   this.$.query.ref.child(key).remove();
+ }
+download(e){
+
+  var fullPath = e.target.value.fullPath;
+    console.log(fullPath);
+//   firebase.storage().child('images/stars.jpg').getDownloadURL().then(function(url) {
+//   // `url` is the download URL for 'images/stars.jpg'
+
+//   // This can be downloaded directly:
+//   var xhr = new XMLHttpRequest();
+//   xhr.responseType = 'blob';
+//   xhr.onload = function(event) {
+//     var blob = xhr.response;
+//   };
+//   xhr.open('GET', url);
+//   xhr.send();
+
+//   // Or inserted into an <img> element:
+//   var img = document.getElementById('myimg');
+//   img.src = url;
+// }).catch(function(error) {
+//   // Handle any errors
+// });
+}
+};
+
+    window.customElements.define(FileUpload.is, FileUpload);
+  </script>
+</dom-module>

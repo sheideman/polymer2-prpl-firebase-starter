@@ -1,0 +1,91 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+    <app-route route="{{route}}" pattern="{{pattern}}" active="{{active}}">
+    </app-route>
+
+<dom-module id="email-app-login">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <firebase-auth
+    id="auth"
+    user="{{user}}"
+    provider="email"
+    on-error="handleError">
+    </firebase-auth>
+    <paper-input id="email" type="email" label="Enter your Email"></paper-input>
+    <paper-input id="pw" type="password" label="Password"></paper-input>
+    <paper-button raised on-tap="login" hidden$="[[user]]">Login</paper-button>
+    <paper-button raised on-tap="signup" hidden$="[[user]]">Sign Up</paper-button>
+  <paper-button raised on-tap="logout" hidden$="[[!user]]">Sign Out</paper-button>
+
+  </template>
+
+  <script>
+    class EmailAppLogin extends Polymer.Element {
+      static get is() { return 'email-app-login'; }
+      static get properties() {
+        return {
+          user: {
+            type: Object
+          },
+           pattern: {
+          value: '/login',
+        },
+        route: {
+          value: function() {
+            // Route objects are composed of the `path` that we want to
+            // match on, the `prefix`, which is everything that has already
+            // been matched by someone else before it got to us, and
+            // an __queryParams object, which represents the ?key=value part
+            // of the URL.
+            // __queryParams is preceded by underscores because unless you're
+            // doing the power-user thing of generating your own route objects,
+            // you want to access query params directly from the <app-route>
+            // element.
+            return {path: '/login', prefix: '', __queryParams: {}}
+          }
+        }
+        };
+      }
+ constructor(){
+   super()
+   console.log('app-login constructor fired')
+ }
+ ready() {
+   super.ready();
+   console.log('app-login Ready fired')
+ }
+ login(){
+   const email = this.$.email.value;
+    const pass = this.$.pw.value;
+    const promise = this.$.auth.signInWithEmailAndPassword(email, pass);
+      return promise
+ }
+  signup(){
+    const email = this.$.email.value;
+    const pass = this.$.pw.value;
+    const promise = this.$.auth.createUserWithEmailAndPassword(email, pass);
+      return promise
+    }
+   
+
+
+ logout(){
+   return this.$.auth.signOut();
+ }
+ updateAuth(){
+  return this.$.auth.onAuthStateChanged(firebaseUser =>{
+    
+  });
+ }
+};
+
+    window.customElements.define(EmailAppLogin.is, EmailAppLogin);
+  </script>
+</dom-module>
